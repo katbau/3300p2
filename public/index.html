@@ -1,0 +1,162 @@
+<html>
+ <head>
+
+   <meta charset="UTF-8">
+   <title>CS 3300 Project II // Song Discovery</title>
+   <script src="https://d3js.org/d3.v4.min.js"></script>
+
+   <script
+   src="https://code.jquery.com/jquery-2.2.4.min.js"
+   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+   crossorigin="anonymous">
+   </script>
+
+   <link rel="stylesheet" href="assets/css/style.css">
+
+   <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700" rel="stylesheet">
+
+ </head>
+
+ <body>
+
+<!-- HEADER -->
+
+
+   <header>
+     <div>How <span>to</span><br>Discover Songs.</div>
+     <div class="subtitle"><i>By Michael Gingras, Kat Bau, and Nikhil</i></div>
+   </header>
+
+
+<!-- SECTION -->
+
+   <section id='s1'>
+     <p>For now, I think we are going to do our report on how similar music is, and
+     if we can use some sort of statistical modeling to predict if a person will
+     like a song. We will use playlists and analyze the trends in the music from
+     data provided by echonest. If you have a spotify premium account and would like
+     to use your own data. Click here. If not, you can enjoy the report that
+     features data from the top 100 songs of 2016.</p>
+   </section>
+
+  <!-- <input type="text" id="js-search-song" data-id="1">
+  <div id="js-results"></div> -->
+
+
+    <section id='s2'>
+      <div class="flex-container">
+        <div>
+          <p class="text-center">Click below to login.</p>
+          <button id="js-login">Login</button>
+          <h4 id="js-welcome" class="text-center"></h4>
+        </div>
+        <div id="js-show-playlists" style="border-left: 1px solid #EAEAEA;">
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p id='p1'></p>
+
+    </section>
+
+
+<!-- JS -->
+
+   <script src="https://www.gstatic.com/firebasejs/3.7.5/firebase.js"></script>
+   <script src="assets/js/spotify.js"></script>
+
+   <script>
+   // Initialize Firebase
+   var config = {
+     apiKey: "AIzaSyDYuCGEQ9tjrA0RB7tDRHmI-HzmWo8Fk7o",
+     authDomain: "dancability-53d59.firebaseapp.com",
+     databaseURL: "https://dancability-53d59.firebaseio.com",
+     projectId: "dancability-53d59",
+     storageBucket: "dancability-53d59.appspot.com",
+     messagingSenderId: "43112660549"
+   };
+   firebase.initializeApp(config);
+
+   var songData,
+       xScale,
+       yScale;
+
+    $("#js-search-song").keyup(function(){
+      var query = $(this).val();
+      searchSongs(query);
+    });
+
+
+  $(document).ready(function(){
+    if(isAuth()){
+      getUser();
+      getPlaylists();
+    }
+  })
+
+
+  $(document).on('click', '#js-song-link', function() {
+    var id = $(this).data('id');
+    addSong(id);
+  });
+
+  $(document).on('click', '#js-playlist-link', function() {
+    var id = $(this).data('id');
+    var owner = $(this).data('owner');
+    showSongs(owner,id,getAudioData);
+  });
+
+
+  // D3 D3 D3 D3 D3
+
+  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+  width = 500 - margin.left - margin.right,
+  height = 300 - margin.top - margin.bottom;
+
+
+  var s1 = d3.select("#p1").append("svg")
+   .attr("width", width + margin.left + margin.right)
+   .attr("height", height + margin.top + margin.bottom)
+   .append("g")
+   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+   xScale = d3.scaleLinear()
+            .domain([0,1])
+            .range([0,width]);
+
+   yScale = d3.scaleLinear()
+            .domain([0,1])
+            .range([height,0]);
+
+  var xAxis = d3.axisBottom(xScale);
+  var yAxis = d3.axisLeft(yScale);
+
+  s1.append("g")
+  .call(yAxis)
+  .attr("transform", "translate(0,0)")
+  .append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 6)
+  .attr("dy", ".7em")
+  .style("text-anchor","end")
+  .text("Energy")
+  .attr("fill","#1A1414");
+
+  // x axis
+  s1.append("g")
+  .call(xAxis)
+  .attr("transform", "translate("+0+","+height+")")
+  .append("text")
+  .attr("x", width)
+  .attr("y", -6)
+  .style("text-anchor", "end")
+  .text("danceability")
+  .attr("fill", "#1A1414");
+
+
+   </script>
+
+ </body>
+ </html>
